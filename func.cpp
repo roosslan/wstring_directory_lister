@@ -2,14 +2,14 @@
 
 void boost_logger::init_logging()
 {
-	std::string roamingDirectory;
+	std::string roaming_directory;
 
 	char* appdata = nullptr;
 	size_t sz = 0;
 	if (_dupenv_s(&appdata, &sz, "APPDATA") == 0 && appdata != nullptr)
 	{
 		/* Convert the Windows path type to a C++ path */
-		roamingDirectory = appdata;
+		roaming_directory = appdata;
 		free(appdata);
 	}
 

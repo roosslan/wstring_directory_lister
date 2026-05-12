@@ -26,9 +26,6 @@
     <ClInclude Include="resource.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="structures.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Headers</Filter>
     </ClInclude>
