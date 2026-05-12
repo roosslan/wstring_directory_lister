@@ -32,10 +32,6 @@ void boost_logger::init_logging()
 	LOG_SAVE << "TRUNCATE TABLE rvt_night_list;";
 }
 
-std::string boost_logger::path_to_filename(const std::string& path) {
-	return path.substr(path.find_last_of("/\\") + 1);
-}
-
 void boost_logger::log_formatter(logging::record_view const& rec, logging::formatting_ostream& strm)
 {
 	strm << rec[expr::smessage];
@@ -59,4 +55,27 @@ const std::wstring uudecode(const std::string& input) {
 	}
 
 	return decoded;
+}
+
+std::string get_model_identity(const std::wstring& xml_path)
+{
+	std::ifstream ifs(xml_path + L"\\Model.rvt", std::ios::binary);
+	if (!ifs.is_open())
+		return "";
+
+	/* грузим файл целиком */
+	std::stringstream buffer;
+	buffer << ifs.rdbuf();
+	std::string xml = buffer.str();
+
+	std::regex rgx(R"(<ModelIdentity>(.*?)</ModelIdentity>)", std::regex::icase);
+	std::smatch match;
+
+	if (std::regex_search(xml, match, rgx))
+	{
+		ifs.close();
+		return match[1].str();
+	}
+
+	return "";
 }

@@ -6,9 +6,13 @@
 namespace fs = std::filesystem;
 
 int main() {
-    boost_logger::init_logging();
+    boost_logger::init_logging();    
 
     std::cout << "AlDev lister v" << lister_version << "\n";
+    std::string model_identity = "";
+
+    /* т.к. у нас обработка кириллических имён файлов происходит на английской версии Windows Server, юзаем UTF-16 */
+    _setmode(_fileno(stdout), _O_U16TEXT);
 
     try {
         /* Iterate recursively through the directory and its subdirectories */
@@ -18,11 +22,12 @@ int main() {
             auto rvt_extension = path_string.substr(path_string.size() - 3);
             boost::algorithm::to_lower(rvt_extension);
 
-            if (fs::is_directory(entry) && rvt_extension == "rvt"){
+            if (fs::is_directory(entry) && rvt_extension == "rvt") {                
+                model_identity = get_model_identity(entry.path().wstring());
                 boost::replace_all(path_string, "C:\\ProgramData\\Autodesk\\Revit Server 2023\\Projects\\Projects", "RSN://ald-vm-revit01/Projects");
                 boost::replace_all(path_string, "\\", "/");
 
-                LOG_SAVE << "INSERT INTO[dbo].[rvt_night_list]([rvt_path], [rvt_name]) VALUES ('" << path_string << "', '" << entry.path().filename().u8string() << "')";
+                LOG_SAVE << "INSERT INTO[dbo].[rvt_night_list]([rvt_path], [rvt_name], [guid]) VALUES ('" << path_string << "', '" << entry.path().filename().u8string() << "', '" << model_identity << "')";
             }
         }
     }

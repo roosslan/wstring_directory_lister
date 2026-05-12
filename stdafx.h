@@ -1,13 +1,16 @@
 #pragma once
 #define _WIN32_WINNT     0x0A00
 
+#include <fcntl.h>
+#include <io.h>
+
 #include <iostream>
 #include <regex>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <filesystem>
-#include <format>
+
 #include <chrono>
 #include <thread>
 #include <stdexcept>
