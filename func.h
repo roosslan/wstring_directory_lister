@@ -4,7 +4,6 @@
 
 const std::string lister_version = "2.12.5.26";
 
-#define LOG_SAV BOOST_LOG_SEV(boost::log::trivial::logger::get(), boost::log::trivial::severity_level::trace)
 #define LOG_SAVE BOOST_LOG_SEV(boost::log::trivial::logger::get(), boost::log::trivial::severity_level::trace)	\
 	<< boost::log::add_value("Line", __LINE__)
 

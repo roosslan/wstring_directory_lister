@@ -20,14 +20,14 @@ void boost_logger::init_logging()
 	logging::core::get()->add_sink(console_sink);
 
 	const auto fs_sink = boost::log::add_file_log(
-		boost::log::keywords::file_name = "C:\\rasa\\aldev_lister.sql",
+		boost::log::keywords::file_name = "C:\\rasa\\_lister.sql",
 		keywords::format = "% Message %",
 		boost::log::keywords::rotation_size = 10 * 1024 * 1024,
 		boost::log::keywords::min_free_space = 30 * 1024 * 1024,
 		boost::log::keywords::open_mode = std::ios_base::out | std::ios_base::trunc);
 
 	fs_sink->locked_backend()->auto_flush(true);
-	LOG_SAVE << "USE[bimalde]";
+	LOG_SAVE << "USE[lister_db]";
 	LOG_SAVE << "GO";
 	LOG_SAVE << "TRUNCATE TABLE rvt_night_list;";
 }

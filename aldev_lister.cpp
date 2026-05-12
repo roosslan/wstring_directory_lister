@@ -35,7 +35,44 @@ int main() {
         std::cerr << "Filesystem error: " << e.what() << '\n';
     }
 
-    std::wstring parameters = L"-S ald-vdi-wg0002 -d bimalde -U bimalde -i C:\\rasa\\aldev_lister.sql -o C:\\rasa\\mssql.log -P ";
+    std::string query_upd_view = R"(
+    MERGE dbo.rvt_list AS target
+        USING(
+            SELECT *
+            FROM dbo.rvt_night_list
+            WHERE TRY_CONVERT(UNIQUEIDENTIFIER, guid) IS NOT NULL
+        ) AS source
+        ON target.rvt_list_guid = TRY_CONVERT(UNIQUEIDENTIFIER, source.guid)
+
+        WHEN MATCHED AND(
+            ISNULL(target.rvt_path, '') < > ISNULL(source.rvt_path, '')
+            OR ISNULL(target.rvt_name, '') < > ISNULL(source.rvt_name, '')
+        )
+        THEN UPDATE SET
+        target.rvt_path = source.rvt_path,
+        target.rvt_name = source.rvt_name
+
+        WHEN NOT MATCHED BY TARGET THEN
+        INSERT(
+            rvt_list_guid,
+            rvt_path,
+            rvt_name,
+            is_active
+        )
+        VALUES(
+            TRY_CONVERT(UNIQUEIDENTIFIER, source.guid),
+            source.rvt_path,
+            source.rvt_name,
+            1
+        )
+
+        WHEN NOT MATCHED BY SOURCE THEN
+        DELETE;
+	)";
+
+    LOG_SAVE << query_upd_view;
+
+    std::wstring parameters = L"-S mssql-server.host -d lister_db -U lister_login -i C:\\rasa\\_lister.sql -o C:\\rasa\\mssql.log -P ";
 	parameters += uudecode("uue_пароль_из_argv");
 
     ShellExecute(nullptr, L"open", L"sqlcmd.exe", parameters.c_str(), nullptr, SW_SHOWNORMAL);
