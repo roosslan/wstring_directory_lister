@@ -1,18 +1,10 @@
 #include "func.h"
+#include "sensitive_data.h" /* excluded from git */
+
+#pragma comment(lib, "version.lib")
 
 void boost_logger::init_logging()
 {
-	std::string roaming_directory;
-
-	char* appdata = nullptr;
-	size_t sz = 0;
-	if (_dupenv_s(&appdata, &sz, "APPDATA") == 0 && appdata != nullptr)
-	{
-		/* Convert the Windows path type to a C++ path */
-		roaming_directory = appdata;
-		free(appdata);
-	}
-
 	boost::log::add_common_attributes();
 
 	const auto console_sink = boost::log::add_console_log(std::clog);
@@ -20,14 +12,14 @@ void boost_logger::init_logging()
 	logging::core::get()->add_sink(console_sink);
 
 	const auto fs_sink = boost::log::add_file_log(
-		boost::log::keywords::file_name = "C:\\rasa\\_lister.sql",
+		boost::log::keywords::file_name = "C:\\rasa\\night_lister.sql",
 		keywords::format = "% Message %",
 		boost::log::keywords::rotation_size = 10 * 1024 * 1024,
 		boost::log::keywords::min_free_space = 30 * 1024 * 1024,
 		boost::log::keywords::open_mode = std::ios_base::out | std::ios_base::trunc);
 
 	fs_sink->locked_backend()->auto_flush(true);
-	LOG_SAVE << "USE[lister_db]";
+	LOG_SAVE << L"USE[" + db_name + L"]";
 	LOG_SAVE << "GO";
 	LOG_SAVE << "TRUNCATE TABLE rvt_night_list;";
 }
@@ -63,7 +55,7 @@ std::string get_model_identity(const std::wstring& xml_path)
 	if (!ifs.is_open())
 		return "";
 
-	/* грузим файл целиком */
+	/* Грузим файл целиком */
 	std::stringstream buffer;
 	buffer << ifs.rdbuf();
 	std::string xml = buffer.str();
@@ -78,4 +70,28 @@ std::string get_model_identity(const std::wstring& xml_path)
 	}
 
 	return "";
+}
+
+std::string get_self_version() {
+	char sz_path[MAX_PATH];
+	GetModuleFileNameA(nullptr, sz_path, MAX_PATH);
+
+	DWORD dw_handle = 0;
+	const DWORD dw_size = GetFileVersionInfoSizeA(sz_path, &dw_handle);
+
+	if (dw_size == 0) return "0.0.0.1";
+
+	std::vector<BYTE> ptr_version_info(dw_size);
+	if (!GetFileVersionInfoA(sz_path, dw_handle, dw_size, ptr_version_info.data()))
+		return "0.0.0.2";
+
+	VS_FIXEDFILEINFO* ptr_file_info = nullptr;
+	UINT ui_size = 0;
+	if (!VerQueryValueA(ptr_version_info.data(), "\\", (LPVOID*)&ptr_file_info, &ui_size))
+		return "0.0.0.3";
+
+	return std::to_string(HIWORD(ptr_file_info->dwFileVersionMS)) + "." +
+		std::to_string(LOWORD(ptr_file_info->dwFileVersionMS)) + "." +
+		std::to_string(HIWORD(ptr_file_info->dwFileVersionLS)) + "." +
+		std::to_string(LOWORD(ptr_file_info->dwFileVersionLS));
 }

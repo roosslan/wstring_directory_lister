@@ -3,12 +3,15 @@
 
 #pragma comment(lib, "WtsApi32.lib")
 
+#include "sensitive_data.h" /* excluded from git */
+
 namespace fs = std::filesystem;
 
 int main() {
     boost_logger::init_logging();    
 
-    std::cout << "AlDev lister v" << lister_version << "\n";
+    const std::string lister_version = get_self_version();
+    std::cout << "Revit server models lister v" << lister_version << "\n";
     std::string model_identity = "";
 
     /* т.к. у нас обработка кириллических имён файлов происходит на английской версии Windows Server, юзаем UTF-16 */
@@ -35,7 +38,7 @@ int main() {
         std::cerr << "Filesystem error: " << e.what() << '\n';
     }
 
-    std::string query_upd_view = R"(
+    std::string query_update_view = R"(
     MERGE dbo.rvt_list AS target
         USING(
             SELECT *
@@ -70,10 +73,10 @@ int main() {
         DELETE;
 	)";
 
-    LOG_SAVE << query_upd_view;
+    LOG_SAVE << query_update_view;
 
-    std::wstring parameters = L"-S mssql-server.host -d lister_db -U lister_login -i C:\\rasa\\_lister.sql -o C:\\rasa\\mssql.log -P ";
-	parameters += uudecode("uue_пароль_из_argv");
+    std::wstring parameters = L"-S " + db_host_name + L" -d " + db_name + L" -U " + db_user_name + L" -i C:\\rasa\\night_lister.sql -o C:\\rasa\\mssql.log -P ";
+    parameters += db_password; /* hash/decrypting process is in sensitive_data.h */
 
     ShellExecute(nullptr, L"open", L"sqlcmd.exe", parameters.c_str(), nullptr, SW_SHOWNORMAL);
     return 0;

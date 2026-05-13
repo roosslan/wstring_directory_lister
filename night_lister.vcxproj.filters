@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="aldev_lister.cpp">
+    <ClCompile Include="night_lister.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="func.cpp">
@@ -32,9 +32,12 @@
     <ClInclude Include="func.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="sensitive_data.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="aldev_lister.rc">
+    <ResourceCompile Include="night_lister.rc">
       <Filter>Resources</Filter>
     </ResourceCompile>
   </ItemGroup>

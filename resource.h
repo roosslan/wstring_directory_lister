@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by aldev_lister.rc
+// Used by night_lister.rc
 //
 #define IDS_TITLE                       103
 

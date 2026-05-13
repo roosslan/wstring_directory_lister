@@ -22,9 +22,9 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{c1837da7-0904-4faa-867c-63a838df61f8}</ProjectGuid>
-    <RootNamespace>addinupdatercli</RootNamespace>
+    <RootNamespace>night_lister</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>aldev_lister</ProjectName>
+    <ProjectName>night_lister</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -93,16 +93,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="aldev_lister.cpp" />
+    <ClCompile Include="night_lister.cpp" />
     <ClCompile Include="func.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="func.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="sensitive_data.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="aldev_lister.rc" />
+    <ResourceCompile Include="night_lister.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\mfc.ico" />
